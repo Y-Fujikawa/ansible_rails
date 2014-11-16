@@ -1,0 +1,4 @@
+---
+# file: ansible_rails/roles/user/tasks/main.yml
+- name: add user
+  user: name=www shell=/bin/bash state=present append=yes groups=wheel

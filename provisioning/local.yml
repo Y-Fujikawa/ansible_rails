@@ -1,10 +1,11 @@
 ---
 # file: provisioning/local.yml
 - name: Nginx Playbook # タスク名
-  hosts: local          # 対象ホスト 
+  hosts: local          # 対象ホスト
   sudo: yes             # sudoするか
   roles:                # 実際のタスクを記述しているディレクトリ
     - nginx
+    - user
   tags:                 # タスクをタグ付け
     - nginx
-
+    - user

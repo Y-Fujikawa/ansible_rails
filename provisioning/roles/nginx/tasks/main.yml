@@ -16,4 +16,3 @@
   command: chkconfig nginx on
 - name: restart nginx
   command: service nginx restart
-
