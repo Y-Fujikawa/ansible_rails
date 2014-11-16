@@ -10,3 +10,59 @@
     - zlib-devel
     - git
   sudo: true
+
+- name: checkout rbenv_repo
+  git: >
+    repo={{ rbenv_repo }}
+    dest={{ rbenv_root }}
+    version={{ rbenv.version }}
+    accept_hostkey=true
+
+- name: create plugins directory
+  file: state=directory path={{ rbenv_root }}/plugins
+
+- name: install plugins
+  git: >
+    repo={{ item.repo }}
+    dest={{ rbenv_root }}/plugins/{{ item.name }}
+    version={{ item.version }}
+    accept_hostkey=true
+  with_items: rbenv_plugins
+
+- name: checkout rbenv_repo for selected users
+  git: >
+    repo={{ rbenv_repo }}
+    dest={{ rbenv_root }}
+    version={{ rbenv.version }}
+    accept_hostkey=true
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: create plugins directory for selected users
+  file: state=directory path={{ rbenv_root }}/plugins
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: install plugins for selected users
+  git: >
+    repo={{ item[1].repo }}
+    dest={{ rbenv_root }}/plugins/{{ item[1].name }}
+    version={{ item[1].version }}
+    accept_hostkey=true
+  with_nested:
+    - rbenv_users
+    - rbenv_plugins
+  sudo: true
+  sudo_user: "{{ item[0].name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: add rbenv initialization to profile
+  template: src=rbenv.sh.j2 dest=/etc/profile.d/rbenv.sh owner=root group=root mode=0755
+  sudo: true
