@@ -66,3 +66,27 @@
 - name: add rbenv initialization to profile
   template: src=rbenv.sh.j2 dest=/etc/profile.d/rbenv.sh owner=root group=root mode=0755
   sudo: true
+
+- name: set default-gems
+  copy: src=default-gems dest={{ item.home }}/.rbenv/default-gems
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: set gemrc
+  copy: src=gemrc dest={{ item.home }}/.gemrc
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: set vars
+  copy: src=vars dest={{ item.home }}/.rbenv/vars
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
