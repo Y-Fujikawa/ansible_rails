@@ -6,6 +6,8 @@
   roles:                # 実際のタスクを記述しているディレクトリ
     - nginx
     - user
+    - ruby
   tags:                 # タスクをタグ付け
     - nginx
     - user
+    - ruby

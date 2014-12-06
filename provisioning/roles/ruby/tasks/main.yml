@@ -1,0 +1,144 @@
+---
+# file: ansible_rails/roles/ruby/tasks/main.yml
+- name: install build depends
+  yum: name={{ item }} state=present
+  with_items:
+    - gcc
+    - openssl-devel
+    - libyaml-devel
+    - readline-devel
+    - zlib-devel
+    - git
+  sudo: true
+
+- name: checkout rbenv_repo
+  git: >
+    repo={{ rbenv_repo }}
+    dest={{ rbenv_root }}
+    version={{ rbenv.version }}
+    accept_hostkey=true
+
+- name: create plugins directory
+  file: state=directory path={{ rbenv_root }}/plugins
+
+- name: install plugins
+  git: >
+    repo={{ item.repo }}
+    dest={{ rbenv_root }}/plugins/{{ item.name }}
+    version={{ item.version }}
+    accept_hostkey=true
+  with_items: rbenv_plugins
+
+- name: checkout rbenv_repo for selected users
+  git: >
+    repo={{ rbenv_repo }}
+    dest={{ rbenv_root }}
+    version={{ rbenv.version }}
+    accept_hostkey=true
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: create plugins directory for selected users
+  file: state=directory path={{ rbenv_root }}/plugins
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: install plugins for selected users
+  git: >
+    repo={{ item[1].repo }}
+    dest={{ rbenv_root }}/plugins/{{ item[1].name }}
+    version={{ item[1].version }}
+    accept_hostkey=true
+  with_nested:
+    - rbenv_users
+    - rbenv_plugins
+  sudo: true
+  sudo_user: "{{ item[0].name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: add rbenv initialization to profile
+  template: src=rbenv.sh.j2 dest=/etc/profile.d/rbenv.sh owner=root group=root mode=0755
+  sudo: true
+
+- name: set default-gems
+  copy: src=default-gems dest={{ item.home }}/.rbenv/default-gems
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: set gemrc
+  copy: src=gemrc dest={{ item.home }}/.gemrc
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: set vars
+  copy: src=vars dest={{ item.home }}/.rbenv/vars
+  with_items: rbenv_users
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  when: not "system" == "{{ rbenv.env }}"
+  ignore_errors: true
+
+- name: check ruby {{ rbenv.ruby_version }} installed
+  shell: bash -lc "rbenv versions | grep {{ rbenv.ruby_version }}"
+  register: ruby_installed
+  changed_when: false
+  ignore_errors: yes
+
+- name: install ruby {{ rbenv.ruby_version }}
+  shell: bash -lc "rbenv install {{ rbenv.ruby_version }}"
+  when: ruby_installed.rc != 0
+
+- name: install ruby {{ rbenv.ruby_version }}
+  shell: bash -lc "rbenv global {{ rbenv.ruby_version }} && rbenv rehash"
+  when: ruby_installed.rc != 0
+
+- name: check ruby {{ rbenv.ruby_version }} installed
+  shell: bash -lc "rbenv versions | grep {{ rbenv.ruby_version }}"
+  sudo: true
+  sudo_user: "{{ item.name }}"
+  with_items: rbenv_users
+  when: not "system" == "{{ rbenv.env }}"
+  register: ruby_installed
+  ignore_errors: yes
+
+- name: chown permission to .rbenv directory
+  shell: "chown -R {{ item[1].name }}:{{ item[1].name }} {{ item[1].home }}/.rbenv"
+  sudo: true
+  with_together:
+    - ruby_installed.results
+    - rbenv_users
+  when: (not "system" == "{{ rbenv.env }}") and (item[0].rc != 0)
+  ignore_errors: true
+
+- name: install ruby {{ rbenv.ruby_version }}
+  shell: bash -lc "rbenv install {{ rbenv.ruby_version }}"
+  sudo: true
+  sudo_user: "{{ item[1].name }}"
+  with_together:
+    - ruby_installed.results
+    - rbenv_users
+  when: (not "system" == "{{ rbenv.env }}") and (item[0].rc != 0)
+  ignore_errors: true
+
+- name: install ruby {{ rbenv.ruby_version }}
+  shell: bash -lc "rbenv global {{ rbenv.ruby_version }} && rbenv rehash"
+  sudo: true
+  sudo_user: "{{ item[1].name }}"
+  with_together:
+    - ruby_installed.results
+    - rbenv_users
+  when: (not "system" == "{{ rbenv.env }}") and (item[0].rc != 0)
+  ignore_errors: true
