@@ -113,3 +113,32 @@
   when: not "system" == "{{ rbenv.env }}"
   register: ruby_installed
   ignore_errors: yes
+
+- name: chown permission to .rbenv directory
+  shell: "chown -R {{ item[1].name }}:{{ item[1].name }} {{ item[1].home }}/.rbenv"
+  sudo: true
+  with_together:
+    - ruby_installed.results
+    - rbenv_users
+  when: (not "system" == "{{ rbenv.env }}") and (item[0].rc != 0)
+  ignore_errors: true
+
+- name: install ruby {{ rbenv.ruby_version }}
+  shell: bash -lc "rbenv install {{ rbenv.ruby_version }}"
+  sudo: true
+  sudo_user: "{{ item[1].name }}"
+  with_together:
+    - ruby_installed.results
+    - rbenv_users
+  when: (not "system" == "{{ rbenv.env }}") and (item[0].rc != 0)
+  ignore_errors: true
+
+- name: install ruby {{ rbenv.ruby_version }}
+  shell: bash -lc "rbenv global {{ rbenv.ruby_version }} && rbenv rehash"
+  sudo: true
+  sudo_user: "{{ item[1].name }}"
+  with_together:
+    - ruby_installed.results
+    - rbenv_users
+  when: (not "system" == "{{ rbenv.env }}") and (item[0].rc != 0)
+  ignore_errors: true
