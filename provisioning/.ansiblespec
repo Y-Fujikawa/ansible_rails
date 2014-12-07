@@ -1,4 +1,4 @@
 --- 
 - 
-  playbook: site.yml
-  inventory: hosts
+  playbook: local.yml
+  inventory: ./inventory/local
