@@ -2,8 +2,8 @@ require 'serverspec'
 require 'pathname'
 require 'net/ssh'
 
-# Required by serverspec
-set :backend, :exec
+include SpecInfra::Helper::Ssh
+include SpecInfra::Helper::DetectOS
 
 RSpec.configure do |c|
   if ENV['ASK_SUDO_PASSWORD']
@@ -13,21 +13,19 @@ RSpec.configure do |c|
     c.sudo_password = ENV['SUDO_PASSWORD']
   end
   c.before :all do
-    block = self.class.metadata[:example_group_block]
+    block = self.class.metadata[:block]
     if RUBY_VERSION.start_with?('1.8')
       file = block.to_s.match(/.*@(.*):[0-9]+>/)[1]
     else
       file = block.source_location.first
     end
-    host  = ENV['TARGET_HOST']
+    host  = File.basename(Pathname.new(file).dirname)
     if c.host != host
       c.ssh.close if c.ssh
       c.host  = host
       options = Net::SSH::Config.for(c.host)
-      user    = ENV['TARGET_USER']
-      options[:keys] = ENV['TARGET_PRIVATE_KEY']
+      user    = options[:user] ||= Etc.getlogin
       c.ssh   = Net::SSH.start(host, user, options)
     end
   end
 end
-

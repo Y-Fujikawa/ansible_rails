@@ -12,9 +12,3 @@ end
 describe port(80) do
   it { should be_listening }
 end
-
-describe file('/etc/nginx/nginx.conf') do
-  it { should be_file }
-  it { should contain "worker_connections  1024;" }
-end
-

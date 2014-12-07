@@ -1,4 +1,0 @@
---- 
-- 
-  playbook: local.yml
-  inventory: ./inventory/local
