@@ -2,8 +2,8 @@ require 'serverspec'
 require 'pathname'
 require 'net/ssh'
 
-include SpecInfra::Helper::Ssh
-include SpecInfra::Helper::DetectOS
+# Required by serverspec
+set :backend, :exec
 
 RSpec.configure do |c|
   if ENV['ASK_SUDO_PASSWORD']
