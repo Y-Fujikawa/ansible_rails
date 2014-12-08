@@ -9,7 +9,9 @@
     - nginx
     - user
     - ruby
+    - mysql
   tags:                 # タスクをタグ付け
     - nginx
     - user
     - ruby
+    - mysql

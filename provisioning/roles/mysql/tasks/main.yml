@@ -1,0 +1,5 @@
+---
+# file: ansible_rails/roles/mysql/tasks/main.yml
+- name: Ensure MySQL packages are installed.
+  yum: "name={{ item }} state=installed"
+  with_items: mysql_packages
