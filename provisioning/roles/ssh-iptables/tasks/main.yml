@@ -1,0 +1,14 @@
+---
+# file: ansible_rails/roles/ssh-iptables/tasks/main.yml
+- name: create iptables
+  template: src=iptables.j2 dest=/etc/sysconfig/iptables
+
+- name: disallow root SSH access
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^#PermitRootLogin " line="PermitRootLogin no" state=present
+
+- name: disallow password authentication
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^#PasswordAuthentication " line="PasswordAuthentication no" state=present
+
+# NOTE: Combine two tasks to keep ansible access with port 22
+- name: restart sshd and restart iptables
+  shell: service sshd restart && /etc/init.d/iptables restart
