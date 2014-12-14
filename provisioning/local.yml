@@ -4,6 +4,7 @@
   hosts: local          # 対象ホスト
   sudo: yes             # sudoするか
   roles:                # 実際のタスクを記述しているディレクトリ
+    - ssh-iptables
     - nginx
     - user
     - ruby
