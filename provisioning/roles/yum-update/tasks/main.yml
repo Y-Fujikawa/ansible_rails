@@ -1,0 +1,4 @@
+---
+# file: ansible_rails/roles/yum-update/tasks/main.yml
+- name: update yum
+  command: yum -y update

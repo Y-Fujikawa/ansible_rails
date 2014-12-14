@@ -5,6 +5,7 @@
   sudo: yes             # sudoするか
   roles:                # 実際のタスクを記述しているディレクトリ
     - ssh-iptables
+    - yum-update
     - nginx
     - user
     - ruby
