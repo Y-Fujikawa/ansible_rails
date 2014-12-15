@@ -42,10 +42,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
 
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", 1024]
+  end
+
   config.vm.provision :ansible do |ansible|
     ansible.playbook = "provisioning/local.yml"
     ansible.inventory_path = "provisioning/inventory/local"
-    ansible.limit = 'all'
+    ansible.limit = "all"
   end
 
   config.vm.provision :serverspec do |spec|
