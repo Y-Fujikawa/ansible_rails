@@ -3,3 +3,6 @@
 - name: Ensure MySQL packages are installed.
   yum: "name={{ item }} state=installed"
   with_items: mysql_packages
+
+- name: ensure mysql is running and starts on boot
+  service: name=mysqld state=started enabled=true
