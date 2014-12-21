@@ -6,3 +6,6 @@
 
 - name: ensure mysql is running and starts on boot
   service: name=mysqld state=started enabled=true
+
+- name: Create database
+  mysql_db: db={{ mysql_dbname }} state=present encoding=utf8

@@ -24,3 +24,6 @@ mysql_packages:
   - mysql
   - mysql-server
   - MySQL-python
+# use database name, dbuser
+mysql_dbname: hoge
+mysql_dbuser: hoge
