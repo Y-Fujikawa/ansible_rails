@@ -9,7 +9,13 @@
     - nginx
     - user
     - ruby
+    - mysql
+  vars_prompt:
+    - name: "dbpassword"
+      prompt: "Please enter MySQL user password"
+      default: "hoge"
   tags:                 # タスクをタグ付け
     - nginx
     - user
     - ruby
+    - mysql

@@ -18,3 +18,12 @@ rbenv_plugins:
 rbenv_root: "{% if rbenv.env == 'system' %}/usr/local/rbenv{% else %}~/.rbenv{% endif %}"
 
 rbenv_users: [vagrant, www]
+
+mysql_daemon: mysqld
+mysql_packages:
+  - mysql
+  - mysql-server
+  - MySQL-python
+# use database name, dbuser
+dbname: hoge
+dbuser: hoge

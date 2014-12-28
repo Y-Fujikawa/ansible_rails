@@ -1,0 +1,18 @@
+---
+# file: ansible_rails/roles/mysql/tasks/main.yml
+- name: Ensure MySQL packages are installed.
+  yum: "name={{ item }} state=installed"
+  with_items: mysql_packages
+
+- name: ensure mysql is running and starts on boot
+  service: name=mysqld state=started enabled=true
+
+- name: Create database
+  mysql_db: db={{ dbname }} state=present encoding=utf8
+
+- name: Create database user
+  mysql_user: >
+    name={{ dbuser }}
+    password="{{ dbpassword }}"
+    priv={{ dbname }}.*:ALL
+    state=present
