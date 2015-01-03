@@ -52,7 +52,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.limit = "all"
   end
 
-  config.vm.provision :serverspec do |spec|
-    spec.pattern = "spec/192.168.33.10/*_spec.rb"
-  end
+  # config.vm.provision :serverspec do |spec|
+  #   spec.pattern = "spec/192.168.33.10/*_spec.rb"
+  # end
 end
