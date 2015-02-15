@@ -2,3 +2,10 @@
 # file: ansible_rails/roles/user/tasks/main.yml
 - name: add user
   user: name=www shell=/bin/bash state=present append=yes groups=wheel
+
+- name: set ssh-key
+  file: path=/home/www/.ssh state=directory owner=www group=www mode=0700
+
+- name: create iptables
+  template: src=authorized_keys.j2 dest=/home/www/.ssh/authorized_keys owner=www group=www mode=0600
+  template: src=id_rsa.j2 dest=/home/www/.ssh/id_rsa owner=www group=www mode=0600

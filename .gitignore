@@ -3,3 +3,6 @@
 ### Vagrant ###
 .vagrant/
 
+### Key ###
+id_rsa*
+authorized_keys*
