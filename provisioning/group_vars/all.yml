@@ -1,6 +1,6 @@
 ---
 rbenv:
-  env: system
+  env: users
   version: v0.4.0
   ruby_version: 2.2.0
 
@@ -17,13 +17,14 @@ rbenv_plugins:
 
 rbenv_root: "{% if rbenv.env == 'system' %}/usr/local/rbenv{% else %}~/.rbenv{% endif %}"
 
-rbenv_users: [vagrant, www]
+rbenv_users: [www]
 
 mysql_daemon: mysqld
 mysql_packages:
   - mysql
   - mysql-server
+  - mysql-devel
   - MySQL-python
 # use database name, dbuser
-dbname: admin_lte
-dbuser: admin_lte
+dbname: sample
+dbuser: sample

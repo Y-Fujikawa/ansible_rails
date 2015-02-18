@@ -50,6 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.playbook = "provisioning/local.yml"
     ansible.inventory_path = "provisioning/inventory/local"
     ansible.limit = "all"
+    ansible.ask_sudo_pass = true
   end
 
   # config.vm.provision :serverspec do |spec|
