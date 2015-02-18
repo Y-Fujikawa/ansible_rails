@@ -26,5 +26,5 @@ mysql_packages:
   - mysql-devel
   - MySQL-python
 # use database name, dbuser
-dbname: admin_lte
-dbuser: admin_lte
+dbname: sample
+dbuser: sample
