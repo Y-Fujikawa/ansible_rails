@@ -2,3 +2,6 @@
 # file: ansible_rails/roles/yum-update/tasks/main.yml
 - name: update yum
   command: yum -y update
+
+- name: install node.js
+  yum: name=nodejs state=present
