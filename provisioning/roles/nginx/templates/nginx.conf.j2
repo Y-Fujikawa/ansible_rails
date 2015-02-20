@@ -18,11 +18,15 @@ http {
   sendfile on;
   keepalive_timeout 65;
 
+  upstream app_server {
+    server unix:/var/www/{{ app_name }}/shared/tmp/sockets/unicorn.sock;
+  }
+
   server {
     listen 80 default_server;
     server_name localhost;
 
-    root /var/www/localhost/current/public;
+    root /var/www/{{ app_name }}/shared/public;
 
     location / {
       proxy_set_header X-Real-IP $remote_addr;
@@ -31,7 +35,7 @@ http {
       proxy_redirect off;
 
       if (!-f $request_filename) {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://app_server;
         break;
       }
     }
@@ -47,4 +51,3 @@ http {
     }
   }
 }
-

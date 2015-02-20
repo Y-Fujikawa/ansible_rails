@@ -1,4 +1,6 @@
 ---
+app_name: sample
+
 rbenv:
   env: users
   version: v0.4.0
